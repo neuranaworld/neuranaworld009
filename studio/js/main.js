@@ -9,12 +9,14 @@ import { Engine } from './core/engine.js';
 import { UIManager } from './ui/ui-manager.js';
 import { SelectionManager } from './editor/selection.js';
 import { GizmoManager } from './editor/gizmo.js';
+import { ObjectManager } from './editor/object-manager.js';
 
 // Global instances
 let engine = null;
 let uiManager = null;
 let selectionManager = null;
 let gizmoManager = null;
+let objectManager = null;
 
 /**
  * Studio'yu başlat
@@ -38,6 +40,9 @@ async function initStudio() {
         // Gizmo Manager oluştur
         gizmoManager = new GizmoManager(engine.renderer, engine.dataModel);
         await gizmoManager.init();
+
+        // Object Manager oluştur
+        objectManager = new ObjectManager(engine.dataModel);
 
         // Selection ile Gizmo'yu bağla
         connectSelectionToGizmo();
@@ -144,6 +149,27 @@ function setupUIEvents() {
         setGizmoMode('scale', scaleBtn);
     });
 
+    // Insert butonu
+    const insertBtn = document.getElementById('insertBtn');
+    const insertMenu = document.getElementById('insertMenu');
+
+    insertBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleInsertMenu(insertBtn);
+    });
+
+    // Insert menu items
+    insertMenu.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const objectType = item.dataset.objectType;
+            handleInsertObject(objectType);
+            hideInsertMenu();
+        });
+    });
+
+    // Context menu
+    setupContextMenu();
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         // F5: Play
@@ -159,6 +185,13 @@ function setupUIEvents() {
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
             saveBtn.click();
+        }
+        // Ctrl+D: Duplicate
+        if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault();
+            if (objectManager) {
+                objectManager.duplicateSelected();
+            }
         }
 
         // Gizmo shortcuts (W/E/R)
@@ -200,6 +233,127 @@ function setGizmoMode(mode, activeButton) {
 }
 
 /**
+ * Insert menu göster/gizle
+ */
+function toggleInsertMenu(button) {
+    const insertMenu = document.getElementById('insertMenu');
+    const isVisible = insertMenu.classList.contains('show');
+
+    if (isVisible) {
+        hideInsertMenu();
+    } else {
+        // Position menu below button
+        const rect = button.getBoundingClientRect();
+        insertMenu.style.left = `${rect.left}px`;
+        insertMenu.style.top = `${rect.bottom + 5}px`;
+        insertMenu.classList.add('show');
+
+        // Close on outside click
+        setTimeout(() => {
+            document.addEventListener('click', hideInsertMenu, { once: true });
+        }, 10);
+    }
+}
+
+function hideInsertMenu() {
+    document.getElementById('insertMenu').classList.remove('show');
+}
+
+/**
+ * Nesne oluştur
+ */
+function handleInsertObject(type) {
+    if (!objectManager) return;
+
+    switch (type) {
+        case 'Part':
+            objectManager.createPart();
+            break;
+        case 'Model':
+            addConsoleMessage('⚠️ Model henüz desteklenmiyor', 'warning');
+            break;
+        case 'Script':
+            addConsoleMessage('⚠️ Script henüz desteklenmiyor', 'warning');
+            break;
+    }
+}
+
+/**
+ * Context menu setup
+ */
+function setupContextMenu() {
+    const contextMenu = document.getElementById('contextMenu');
+    const hierarchyPanel = document.getElementById('hierarchy-panel');
+
+    // Right-click on hierarchy items
+    hierarchyPanel.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+
+        // Check if clicked on tree item
+        const treeItem = e.target.closest('.tree-item');
+        if (!treeItem) return;
+
+        // Show context menu
+        contextMenu.style.left = `${e.clientX}px`;
+        contextMenu.style.top = `${e.clientY}px`;
+        contextMenu.classList.add('show');
+
+        // Close on outside click
+        setTimeout(() => {
+            document.addEventListener('click', hideContextMenu, { once: true });
+        }, 10);
+    });
+
+    // Context menu actions
+    contextMenu.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const action = item.dataset.action;
+            handleContextMenuAction(action);
+            hideContextMenu();
+        });
+    });
+
+    // Also close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            hideContextMenu();
+            hideInsertMenu();
+        }
+    });
+}
+
+function hideContextMenu() {
+    document.getElementById('contextMenu').classList.remove('show');
+}
+
+/**
+ * Context menu actions
+ */
+function handleContextMenuAction(action) {
+    if (!objectManager) return;
+
+    const selected = engine.dataModel.selectedObject;
+    if (!selected) return;
+
+    switch (action) {
+        case 'duplicate':
+            objectManager.duplicateSelected();
+            break;
+        case 'delete':
+            objectManager.deleteSelected(false); // No confirmation
+            break;
+        case 'rename':
+            const newName = prompt('Yeni isim:', selected.name);
+            if (newName && newName.trim()) {
+                selected.name = newName.trim();
+                uiManager.updateHierarchy();
+                addConsoleMessage(`✏️ ${newName} olarak yeniden adlandırıldı`, 'info');
+            }
+            break;
+    }
+}
+
+/**
  * Konsola mesaj ekle
  */
 function addConsoleMessage(text, type = 'info') {
@@ -228,5 +382,6 @@ window.NeuranaStudio = {
     uiManager,
     selectionManager,
     gizmoManager,
+    objectManager,
     addConsoleMessage
 };

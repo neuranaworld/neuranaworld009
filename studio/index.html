@@ -40,6 +40,10 @@
             </button>
         </div>
         <div class="toolbar-right">
+            <button id="insertBtn" class="toolbar-btn" title="Insert Object">
+                <span class="icon">➕</span>
+                <span class="label">Insert</span>
+            </button>
             <button id="saveBtn" class="toolbar-btn">
                 <span class="icon">💾</span>
                 <span class="label">Save</span>
@@ -98,6 +102,40 @@
                 <span class="time">[00:00:00]</span>
                 <span class="text">🎬 NeuranaWorld Studio başlatıldı!</span>
             </div>
+        </div>
+    </div>
+
+    <!-- Insert Dropdown Menu -->
+    <div id="insertMenu" class="dropdown-menu">
+        <div class="menu-item" data-object-type="Part">
+            <span class="icon">🔲</span>
+            <span>Part</span>
+        </div>
+        <div class="menu-item" data-object-type="Model">
+            <span class="icon">🎁</span>
+            <span>Model</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-item" data-object-type="Script">
+            <span class="icon">📜</span>
+            <span>Script</span>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="contextMenu" class="context-menu">
+        <div class="menu-item" data-action="duplicate">
+            <span class="icon">📋</span>
+            <span>Duplicate (Ctrl+D)</span>
+        </div>
+        <div class="menu-item" data-action="delete">
+            <span class="icon">🗑️</span>
+            <span>Delete</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-item" data-action="rename">
+            <span class="icon">✏️</span>
+            <span>Rename</span>
         </div>
     </div>
 
