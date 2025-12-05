@@ -1,6 +1,20 @@
 // Neurana World - Main Menu Script
 console.log('🎮 Neurana World Ana Menü Yüklendi!');
 
+// NeuranaWorld Studio
+const studioButton = document.getElementById('openStudio');
+if (studioButton) {
+    studioButton.addEventListener('click', function() {
+        showNotification('🎬 NeuranaWorld Studio yükleniyor...', 'info');
+
+        // Studio sayfasına yönlendirme
+        setTimeout(() => {
+            showNotification('🚀 Studio hazırlanıyor! Geliştirme devam ediyor...', 'success');
+            // window.location.href = 'studio/index.html';  // Studio tamamlandığında aktif edilecek
+        }, 1000);
+    });
+}
+
 // Game data
 const games = {
     memory: {
