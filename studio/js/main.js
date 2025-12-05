@@ -8,11 +8,13 @@
 import { Engine } from './core/engine.js';
 import { UIManager } from './ui/ui-manager.js';
 import { SelectionManager } from './editor/selection.js';
+import { GizmoManager } from './editor/gizmo.js';
 
 // Global instances
 let engine = null;
 let uiManager = null;
 let selectionManager = null;
+let gizmoManager = null;
 
 /**
  * Studio'yu başlat
@@ -33,6 +35,13 @@ async function initStudio() {
         // Selection Manager oluştur
         selectionManager = new SelectionManager(engine.renderer, engine.dataModel);
 
+        // Gizmo Manager oluştur
+        gizmoManager = new GizmoManager(engine.renderer, engine.dataModel);
+        await gizmoManager.init();
+
+        // Selection ile Gizmo'yu bağla
+        connectSelectionToGizmo();
+
         // Otomatik başlat
         engine.start();
 
@@ -41,9 +50,34 @@ async function initStudio() {
 
         addConsoleMessage('✅ Studio başarıyla yüklendi!', 'success');
         addConsoleMessage('💡 İpucu: Viewport\'ta nesnelere tıklayarak seçebilirsiniz', 'info');
+        addConsoleMessage('💡 W/E/R: Move/Rotate/Scale', 'info');
     } else {
         addConsoleMessage('❌ Studio başlatılamadı!', 'error');
     }
+}
+
+/**
+ * Selection ile Gizmo'yu bağla
+ */
+function connectSelectionToGizmo() {
+    // DataModel selection değiştiğinde gizmo'yu güncelle
+    const originalOnSelectionChanged = engine.dataModel.onSelectionChanged;
+
+    engine.dataModel.onSelectionChanged = (instance) => {
+        // Original callback'i çağır (UI Manager için)
+        if (originalOnSelectionChanged) {
+            originalOnSelectionChanged(instance);
+        }
+
+        // Gizmo'yu seçili nesneye bağla
+        if (instance && instance._object3D) {
+            gizmoManager.attach(instance._object3D);
+        } else {
+            gizmoManager.detach();
+        }
+    };
+
+    console.log('🔗 Selection & Gizmo connected');
 }
 
 /**
@@ -93,6 +127,23 @@ function setupUIEvents() {
         }, 500);
     });
 
+    // Gizmo mode butonları
+    const moveBtn = document.getElementById('moveBtn');
+    const rotateBtn = document.getElementById('rotateBtn');
+    const scaleBtn = document.getElementById('scaleBtn');
+
+    moveBtn.addEventListener('click', () => {
+        setGizmoMode('translate', moveBtn);
+    });
+
+    rotateBtn.addEventListener('click', () => {
+        setGizmoMode('rotate', rotateBtn);
+    });
+
+    scaleBtn.addEventListener('click', () => {
+        setGizmoMode('scale', scaleBtn);
+    });
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         // F5: Play
@@ -109,9 +160,43 @@ function setupUIEvents() {
             e.preventDefault();
             saveBtn.click();
         }
+
+        // Gizmo shortcuts (W/E/R)
+        if (gizmoManager) {
+            if (e.key === 'w' || e.key === 'W') {
+                setGizmoMode('translate', moveBtn);
+            } else if (e.key === 'e' || e.key === 'E') {
+                setGizmoMode('rotate', rotateBtn);
+            } else if (e.key === 'r' || e.key === 'R') {
+                setGizmoMode('scale', scaleBtn);
+            }
+        }
     });
 
     console.log('⌨️ UI events bağlandı');
+}
+
+/**
+ * Gizmo modunu değiştir ve buton stillerini güncelle
+ */
+function setGizmoMode(mode, activeButton) {
+    if (!gizmoManager) return;
+
+    gizmoManager.setMode(mode);
+
+    // Buton stillerini güncelle
+    document.querySelectorAll('.gizmo-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    activeButton.classList.add('active');
+
+    // Console message
+    const modeNames = {
+        'translate': 'Move',
+        'rotate': 'Rotate',
+        'scale': 'Scale'
+    };
+    addConsoleMessage(`🎨 ${modeNames[mode]} modu aktif`, 'info');
 }
 
 /**
@@ -142,5 +227,6 @@ window.NeuranaStudio = {
     engine,
     uiManager,
     selectionManager,
+    gizmoManager,
     addConsoleMessage
 };

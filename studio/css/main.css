@@ -88,6 +88,18 @@ body {
     font-size: 1.1rem;
 }
 
+.toolbar-separator {
+    width: 1px;
+    height: 30px;
+    background: var(--border-color);
+    margin: 0 10px;
+}
+
+.gizmo-btn.active {
+    background: var(--accent-color);
+    border-color: var(--accent-hover);
+}
+
 /* =====================================
    MAIN CONTENT LAYOUT
    ===================================== */
