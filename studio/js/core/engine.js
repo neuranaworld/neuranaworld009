@@ -6,10 +6,12 @@
  */
 
 import { Renderer } from './renderer.js';
+import { DataModel } from './datamodel.js';
 
 export class Engine {
     constructor() {
         this.renderer = null;
+        this.dataModel = null;
         this.isRunning = false;
         this.isPaused = false;
         this.clock = new THREE.Clock();
@@ -29,6 +31,9 @@ export class Engine {
             this.renderer = new Renderer('viewport');
             await this.renderer.init();
 
+            // DataModel oluştur
+            this.dataModel = new DataModel(this.renderer.scene);
+
             // Test sahnesini oluştur
             this.createTestScene();
 
@@ -44,17 +49,6 @@ export class Engine {
      * Test sahnesi oluştur
      */
     createTestScene() {
-        // Test küpü ekle
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
-        const material = new THREE.MeshStandardMaterial({
-            color: 0x6c5ce7,
-            metalness: 0.3,
-            roughness: 0.4
-        });
-        const cube = new THREE.Mesh(geometry, material);
-        cube.name = 'TestCube';
-        this.renderer.scene.add(cube);
-
         // Işıklandırma
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         this.renderer.scene.add(ambientLight);
@@ -70,7 +64,23 @@ export class Engine {
         const axesHelper = new THREE.AxesHelper(5);
         this.renderer.scene.add(axesHelper);
 
-        console.log('🎨 Test scene created');
+        // DataModel ile Part'lar oluştur
+        const part1 = this.dataModel.createPart('RedPart', { x: -3, y: 2, z: 0 });
+        part1.setColor(231, 76, 60); // Kırmızı
+
+        const part2 = this.dataModel.createPart('GreenPart', { x: 0, y: 2, z: 0 });
+        part2.setColor(46, 204, 113); // Yeşil
+
+        const part3 = this.dataModel.createPart('BluePart', { x: 3, y: 2, z: 0 });
+        part3.setColor(52, 152, 219); // Mavi
+
+        // Zemin
+        const ground = this.dataModel.createPart('Ground', { x: 0, y: -1, z: 0 });
+        ground.size = { x: 20, y: 0.5, z: 20 };
+        ground.setColor(100, 100, 100);
+        ground.updateTransform();
+
+        console.log('🎨 Test scene created with DataModel');
     }
 
     /**
@@ -120,13 +130,6 @@ export class Engine {
         if (this.isPaused) return;
 
         const delta = this.clock.getDelta();
-
-        // Basit animasyon: Küpü döndür
-        const cube = this.renderer.scene.getObjectByName('TestCube');
-        if (cube) {
-            cube.rotation.x += delta * 0.5;
-            cube.rotation.y += delta * 0.7;
-        }
 
         // Render
         this.renderer.render();

@@ -210,6 +210,64 @@ body {
     color: var(--text-secondary);
 }
 
+.properties-header {
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+.properties-header h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.properties-header .class-name {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.property-group {
+    margin-bottom: 15px;
+}
+
+.property-group-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-left: 3px solid var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.property-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px;
+    padding: 6px 12px;
+    align-items: center;
+}
+
+.property-row label {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.property-row input {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+}
+
+.property-row input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: var(--bg-secondary);
+}
+
 /* =====================================
    OUTPUT CONSOLE
    ===================================== */

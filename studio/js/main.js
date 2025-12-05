@@ -6,9 +6,11 @@
  */
 
 import { Engine } from './core/engine.js';
+import { UIManager } from './ui/ui-manager.js';
 
-// Global engine instance
+// Global instances
 let engine = null;
+let uiManager = null;
 
 /**
  * Studio'yu başlat
@@ -23,6 +25,9 @@ async function initStudio() {
     const success = await engine.init();
 
     if (success) {
+        // UI Manager oluştur
+        uiManager = new UIManager(engine.dataModel);
+
         // Otomatik başlat
         engine.start();
 
@@ -129,5 +134,6 @@ window.addEventListener('DOMContentLoaded', () => {
 // Global erişim için export (debug amaçlı)
 window.NeuranaStudio = {
     engine,
+    uiManager,
     addConsoleMessage
 };
