@@ -7,10 +7,12 @@
 
 import { Engine } from './core/engine.js';
 import { UIManager } from './ui/ui-manager.js';
+import { SelectionManager } from './editor/selection.js';
 
 // Global instances
 let engine = null;
 let uiManager = null;
+let selectionManager = null;
 
 /**
  * Studio'yu başlat
@@ -28,6 +30,9 @@ async function initStudio() {
         // UI Manager oluştur
         uiManager = new UIManager(engine.dataModel);
 
+        // Selection Manager oluştur
+        selectionManager = new SelectionManager(engine.renderer, engine.dataModel);
+
         // Otomatik başlat
         engine.start();
 
@@ -35,6 +40,7 @@ async function initStudio() {
         setupUIEvents();
 
         addConsoleMessage('✅ Studio başarıyla yüklendi!', 'success');
+        addConsoleMessage('💡 İpucu: Viewport\'ta nesnelere tıklayarak seçebilirsiniz', 'info');
     } else {
         addConsoleMessage('❌ Studio başlatılamadı!', 'error');
     }
@@ -135,5 +141,6 @@ window.addEventListener('DOMContentLoaded', () => {
 window.NeuranaStudio = {
     engine,
     uiManager,
+    selectionManager,
     addConsoleMessage
 };

@@ -198,6 +198,11 @@ body {
     height: 100%;
     display: block;
     background: #1a1a1a;
+    cursor: crosshair;
+}
+
+#viewport:active {
+    cursor: pointer;
 }
 
 /* =====================================
