@@ -9,9 +9,8 @@ if (studioButton) {
 
         // Studio sayfasına yönlendirme
         setTimeout(() => {
-            showNotification('🚀 Studio hazırlanıyor! Geliştirme devam ediyor...', 'success');
-            // window.location.href = 'studio/index.html';  // Studio tamamlandığında aktif edilecek
-        }, 1000);
+            window.location.href = 'studio/index.html';
+        }, 800);
     });
 }
 

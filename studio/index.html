@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuranaWorld Studio - Game Editor</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Toolbar -->
+    <div id="toolbar">
+        <div class="toolbar-left">
+            <div class="logo">⚡ NeuranaWorld Studio</div>
+        </div>
+        <div class="toolbar-center">
+            <button id="playBtn" class="toolbar-btn" title="Play (F5)">
+                <span class="icon">▶️</span>
+                <span class="label">Play</span>
+            </button>
+            <button id="pauseBtn" class="toolbar-btn" title="Pause" disabled>
+                <span class="icon">⏸️</span>
+                <span class="label">Pause</span>
+            </button>
+            <button id="stopBtn" class="toolbar-btn" title="Stop" disabled>
+                <span class="icon">⏹️</span>
+                <span class="label">Stop</span>
+            </button>
+        </div>
+        <div class="toolbar-right">
+            <button id="saveBtn" class="toolbar-btn">
+                <span class="icon">💾</span>
+                <span class="label">Save</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Left Panel: Hierarchy -->
+        <div id="hierarchy-panel" class="panel">
+            <div class="panel-header">
+                <span class="panel-title">📋 Explorer</span>
+            </div>
+            <div class="panel-content">
+                <div class="tree-view">
+                    <div class="tree-item">
+                        <span class="tree-icon">📦</span>
+                        <span class="tree-label">Workspace</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Viewport -->
+        <div id="viewport-container">
+            <div class="viewport-header">
+                <span class="viewport-title">🎨 Viewport</span>
+                <div class="viewport-controls">
+                    <span class="fps-counter">FPS: <span id="fps">60</span></span>
+                </div>
+            </div>
+            <canvas id="viewport"></canvas>
+        </div>
+
+        <!-- Right Panel: Properties -->
+        <div id="properties-panel" class="panel">
+            <div class="panel-header">
+                <span class="panel-title">⚙️ Properties</span>
+            </div>
+            <div class="panel-content">
+                <div class="properties-empty">
+                    <p>Nesne seçin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Panel: Output Console -->
+    <div id="output-panel" class="panel-bottom">
+        <div class="panel-header">
+            <span class="panel-title">📝 Output</span>
+        </div>
+        <div class="panel-content console">
+            <div class="console-message info">
+                <span class="time">[00:00:00]</span>
+                <span class="text">🎬 NeuranaWorld Studio başlatıldı!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js"></script>
+
+    <!-- Core Engine -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
